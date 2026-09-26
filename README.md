@@ -21,7 +21,14 @@ A Go library that puts many password hashing algorithms behind one API. It lets 
 
 ## ⚡ [zitadel/zitadel](https://github.com/zitadel/zitadel): performance engineering
 
-Over 35 performance pull requests on ZITADEL's event-sourced core, running from 2023 to today. Hot authentication endpoints, **token introspection** and **service-account (machine) authentication** among them, are up to **100× faster** than before this work.
+Over 35 performance pull requests on ZITADEL's event-sourced core, running from 2023 to today. Measured with ZITADEL's own published k6 benchmarks:
+
+| Endpoint | First benchmark | Latest ([v4.17.1](https://github.com/zitadel/zitadel/pull/12651)) | Improvement |
+| --- | ---: | ---: | ---: |
+| Token introspection | [18 req/s](https://zitadel.com/docs/apis/benchmarks/v4/introspect) (v4.0.0-rc2, p50 26 s) | [**2,297 req/s**](https://zitadel.com/docs/apis/benchmarks/v4.17.1/introspect) (p50 46 ms) | **~127×** |
+| Service-account JWT-profile grant | [193 req/s](https://zitadel.com/docs/apis/benchmarks/v2.65.0/machine_jwt_profile_grant) (v2.65.0) | [**1,076 req/s**](https://zitadel.com/docs/apis/benchmarks/v4.17.1/machine_jwt_profile_grant) | **~5.6×** |
+
+In the latest runs the database CPU is the limit (96–98%) while ZITADEL itself uses under 40% CPU, so the application is no longer the bottleneck.
 
 ### OIDC hot paths: introspection, token and service-account auth
 Each approach collapses many database round trips into a single query and takes projection updates off the request path.
@@ -38,7 +45,7 @@ Each approach collapses many database round trips into a single query and takes 
 | [#7657](https://github.com/zitadel/zitadel/pull/7657) | Machine and app secrets moved to passwap with a much cheaper default hash cost for high-entropy client secrets. |
 | [#9092](https://github.com/zitadel/zitadel/pull/9092) | Event push function rewritten in PL/pgSQL, fixing throughput that fell from 836 to 130 req/s during a load test. Closed the *1000 machine authentications/s* goal ([#8352](https://github.com/zitadel/zitadel/issues/8352)). |
 
-**Current benchmarks** ([#12651](https://github.com/zitadel/zitadel/pull/12651), 600 VUs, 30 minutes): introspection **2,297 req/s**, PAT login 3,452 req/s, JWT-profile grant 1,076 req/s, client credentials 834 req/s.
+**Other current benchmarks** ([#12651](https://github.com/zitadel/zitadel/pull/12651), 600 VUs, 30 minutes): PAT login 3,452 req/s, client credentials 834 req/s.
 
 ### Eventstore and projections
 - [#12753](https://github.com/zitadel/zitadel/pull/12753): made projection catch-up reads efficient under a large backlog. The batch query went from **832 ms to 4 ms (~200×)** and drain throughput from **975 to 7,811 events/s (~8×)** with 4.8M events of backlog.
