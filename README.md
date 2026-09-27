@@ -1,9 +1,7 @@
 # Tim Möhlmann
 
-Backend engineer and software architect at [ZITADEL](https://github.com/zitadel), building open-source identity infrastructure in Go and PostgreSQL.
+Head of Engineering, Backend engineer and software architect at [ZITADEL](https://github.com/zitadel), building open-source identity infrastructure in Go and PostgreSQL.
 My work centres on **database-backed performance**, **authorization architecture** and **security primitives**.
-
-This page supplements my CV. Every claim below links to the public issue, pull request or repository behind it.
 
 ---
 
